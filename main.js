@@ -1,38 +1,37 @@
-const container = document.getElementById("container");
-//create the button
-let button = document.createElement('button');
-button.innerHTML = 'Clear Screen';
-button.style = "top:0;right:0;position:absolute;z-index: 9999"
+const container = document.getElementById('container');
+let isBW = 1;
+let rainbowbtn = document.querySelector('#rainbow-bw');
 
-//append somewhere
+makeGrid(16, 16);
 
-let body = document.getElementsByTagName('body')[0];
-
-body.appendChild(button);
-
-
-
-function createGrid(rows, cols) {
-  container.style.setProperty('--grid-rows', rows);
-  container.style.setProperty('--grid-cols', cols);
-  for (c = 0; c < (rows * cols); c++) {
-    let cell = document.createElement("div");
-    cell.innerText = (c + 1);
-    container.appendChild(cell).className = "grid-item";
-  };
-};
-
-createGrid(16, 16);
-
-
-//add event handler
-button.addEventListener('click', function(){
-    alert("clear screen!");
-    container.remove();
-    response = prompt("Please input a number to make the new grid ");
-    //alert(response);
-    //createGrid(response,response);
-    
-
+rainbowbtn.addEventListener('click', (e) => {
+    isBW = 1 - isBW;
+    rainbowbtn.textContent = (rainbowbtn.textContent != "Random color") ? "Random color" : "Blue";
 });
-//alert(response);
+
+document.querySelector('#btn').addEventListener('click', (e) => {
+    let cells = document.querySelectorAll('.grid-item');
+    cells.forEach((cell) => {
+        document.querySelector('#container').removeChild(cell);
+    });
+    let num = prompt('Please input a number to make the new grid  (Default: 16): ', '16');
+    while (!(!isNaN(+num) && +num >= 1 && +num <= 100)) {
+        num = prompt('Enter a number that is between 1 and 100: ', '16');
+    }
+    makeGrid(num, num);
+});
+
+function fill(e) {
+    e.target.style['background-color'] = (isBW) ? 'blue' : `rgb(${Math.floor((Math.random() * 255))},${Math.floor((Math.random() * 255))},${Math.floor((Math.random() * 255))})`;
+}
+
+function makeGrid(rows, cols) {
+    container.style['grid-template-columns'] = `repeat(${+cols}, 1fr)`;
+    container.style['grid-template-rows'] = `repeat(${+rows}, 1fr)`;
+    for (i = 0; i < (rows * cols); i++) {
+        let cell = document.createElement('div');
+        cell.style['backgroundColor'] = 'white';
+        cell.addEventListener('mouseenter', fill);
+        container.appendChild(cell).className = 'grid-item';
+    }
+}
